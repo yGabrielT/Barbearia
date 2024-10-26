@@ -52,7 +52,25 @@ app.get('/sql', (req,res) => {
         res.json(result);
     });
     
-  }); 
+});
+
+app.get('/sql/inputUser', (req,res) => {
+  const { nome, data, email, senha, tel} = req.query;
+  
+
+  if (!nome || !data || !email || !senha || !tel) {
+      return res.status(400).json({ error: 'values are required' });
+  }
+
+  const query = 'INSERT INTO tbcliente (nome, email, data_nasc, telefone, senha) VALUE (?,?,?,?,?)';
+  
+  con.query(query, [nome, email, data, tel, senha], (err, result) => {
+      if (err) throw err;
+      console.log(result);
+      res.json(result);
+  });
+  
+}); 
 
 app.listen(8080, () => {
     console.log('Server esta escutando no porto 8080');
