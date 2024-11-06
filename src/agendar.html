@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento Barbearia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 350px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+        }
+
+        .calendar-header button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .calendar-header button:hover {
+            background-color: #218838;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-days div {
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .calendar-days div:hover {
+            background-color: #e0e0e0;
+        }
+
+        .selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .form-section {
+            margin-top: 20px;
+        }
+
+        .form-section select, .form-section button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .calendar-footer {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="calendar-header">
+            <button onclick="previousMonth()">&#8249;</button>
+            <h2 id="month-year"></h2>
+            <button onclick="nextMonth()">&#8250;</button>
+        </div>
+        <div class="calendar-days" id="calendar-days">
+            <!-- Dias serão gerados aqui dinamicamente -->
+        </div>
+
+        <div class="form-section">
+            <h3>Escolha o Serviço:</h3>
+            <select id="servico">
+                <option value="corte_cabelo">Corte de Cabelo</option>
+                <option value="barba">Somente Barba</option>
+                <option value="corte_e_barba">Corte de Cabelo e Barba</option>
+            </select>
+
+            <button id="confirmar-agendamento" onclick="confirmarAgendamento()">Confirmar Agendamento</button>
+        </div>
+
+        <div class="calendar-footer">
+            <p id="selected-date">Selecione uma data.</p>
+        </div>
+    </div>
+
+    <script>
+        // Encontrar email do usuario e adquirir seu id
+        const clienteEmail = localStorage.getItem('emailCliente');
+        var clienteId = 0;
+        fetch(`/sql/selectCliente?email=${clienteEmail}`)
+            .then(response=> response.json())
+            .then(data => extractData(data[0].id_cliente));
+        function extractData(obj)
+        {
+            clienteId = obj;
+            console.log(clienteId);
+            
+        }
+        
+        
+
+        let currentDate = new Date();
+        let selectedDate = null;
+
+        // Função para renderizar o calendário
+        function renderCalendar() {
+            const monthYearElement = document.getElementById('month-year');
+            const calendarDaysElement = document.getElementById('calendar-days');
+            const selectedDateElement = document.getElementById('selected-date');
+            
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            
+            const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            const daysOfWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+            
+            monthYearElement.innerText = `${months[month]} ${year}`;
+            
+            calendarDaysElement.innerHTML = '';
+            
+            // Adiciona os dias da semana no topo
+            daysOfWeek.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.innerText = day;
+                calendarDaysElement.appendChild(dayElement);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            
+            for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+                calendarDaysElement.appendChild(document.createElement('div'));
+            }
+
+            // Adiciona os dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.innerText = day;
+                dayElement.onclick = () => selectDate(day);
+                calendarDaysElement.appendChild(dayElement);
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            
+            selectedDate = new Date(year, month, day);
+            document.getElementById('selected-date').innerText = `Data selecionada: ${selectedDate.toLocaleDateString('pt-BR')}`;
+            
+            renderCalendar();
+            highlightSelectedDate(day);
+        }
+
+        function highlightSelectedDate(day) {
+            const dayElements = document.querySelectorAll('.calendar-days div');
+            dayElements.forEach((element) => {
+                if (element.innerText == day) {
+                    element.classList.add('selected');
+                } else {
+                    element.classList.remove('selected');
+                }
+            });
+        }
+        
+        function formatDatetimeWithoutTimezone(input) {
+            const date = new Date(input);
+    
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            
+            // Return in the format 'YYYY-MM-DD HH:mm:ss'
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+        function confirmarAgendamento() {
+            if (selectedDate === null) {
+                alert("Por favor, selecione uma data.");
+                return;
+            }
+            
+            const servico = document.getElementById("servico").value;
+            const dataSelecionada = selectedDate.toISOString();
+            let servicoEscolhido = "";
+
+            switch (servico) {
+                case "corte_cabelo":
+                    servicoEscolhido = "Corte de Cabelo";
+                    break;
+                case "barba":
+                    servicoEscolhido = "Somente Barba";
+                    break;
+                case "corte_e_barba":
+                    servicoEscolhido = "Corte de Cabelo e Barba";
+                    break;
+            }
+
+            alert(`Seu agendamento foi confirmado!\nData: ${dataSelecionada}\nServiço: ${servicoEscolhido}`);
+            
+            fetch(`/sql/inputAgendamento?id_cliente=${clienteId}&data_corte=${formatDatetimeWithoutTimezone(dataSelecionada)}&desc_corte=${servicoEscolhido}`)
+                .then(response=> response.json())
+                .then(data => console.log(data));
+        }
+
+        renderCalendar();
+    </script>
+
+</body>
+</html>

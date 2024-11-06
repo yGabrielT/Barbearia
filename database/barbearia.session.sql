@@ -20,4 +20,10 @@ INSERT INTO tbcliente (nome,email,data_nasc,telefone,senha) values
 ('João', 'joao12345@gmail.com','2001-01-21',111111111,'senha1234');
 
 -- @block
+SELECT * FROM tbagendamentos
+
+-- @block
 SELECT * FROM tbcliente
+
+-- @block
+SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte from tbcliente,tbagendamentos

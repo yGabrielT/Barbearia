@@ -113,6 +113,8 @@
                 fetch(`/sql/inputUser?nome=${fullName}&data=${birthDate}&email=${email}&tel=${tel}&senha=${senha}`)
                     .then(response=> response.json())
                     .then(data => console.log(data));
+                localStorage.setItem('emailCliente',email);
+                window.location.href = ("agendar.html");
             } else {
                 alert('Por favor, preencha todos os campos.');
             }

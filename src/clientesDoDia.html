@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    
+    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  
+<title>Barbearia - Clientes do Dia</title>
+    
+   
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    }
+
+    header {
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    #clientes {
+        background: #fff;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    li:last-child {
+        border-bottom: none;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>Clientes Agendados para Hoje</h1>
+    
+    
+</header>
+    <main>
+        
+     
+<section id="clientes">
+            
+           
+
+   
+<h2>Lista de Clientes</h2>
+            
+ 
+<ul id="lista-clientes"></ul>
+
+</section>
+
+</main>
+    <script>
+        var clientesAgendados1;
+        fetch(`/sql/selectAgendamentos`)
+                .then(response=> response.json())
+                .then(data => extractClientes(data));
+
+        function extractClientes(obj)
+        {
+            clientesAgendados1 = obj;
+            console.log(clientesAgendados1);
+            exibirClientes();
+        }
+        
+        const clientesAgendados = [
+            {nome: "João Silva", servico: "Corte de Cabelo", horario: "10:00" },
+            { nome: "Maria Oliveira", servico: "Barba", horario: "11:30" },
+            { nome: "Pedro Santos", servico: "Corte e Barba", horario: "13:00" },
+            {nome: "Ana Paula", servico: "Corte de Cabelo", horario: "15:00" },
+        ];
+        function exibirClientes() {
+            const listaClientes = document.getElementById("lista-clientes");
+            clientesAgendados1.forEach(cliente => {
+                const li = document.createElement("li");
+                li.textContent = `${cliente.nome} - ${cliente.desc_corte} às ${cliente.data_corte}`;
+                listaClientes.appendChild(li);
+        });
+        }
+    </script>
+</body>
+</html>

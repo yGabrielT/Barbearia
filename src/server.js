@@ -72,6 +72,55 @@ app.get('/sql/inputUser', (req,res) => {
   
 }); 
 
+app.get('/sql/inputAgendamento', (req,res) => {
+    const {id_cliente, data_corte, desc_corte} = req.query;
+
+
+    if (!id_cliente || !data_corte || !desc_corte) {
+        return res.status(400).json({ error: 'values are required' });
+    }
+
+    const query = 'INSERT INTO tbagendamentos (id_cliente, data_corte, desc_corte) VALUE (?,?,?)';
+
+    con.query(query, [id_cliente, data_corte, desc_corte], (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+
+}); 
+
+app.get('/sql/selectCliente', (req,res) => {
+    const {email} = req.query;
+
+
+    if (!email) {
+        return res.status(400).json({ error: 'values are required' });
+    }
+
+    const query = 'SELECT id_cliente from tbcliente where email = (?)';
+
+    con.query(query, [email], (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+
+}); 
+
+app.get('/sql/selectAgendamentos', (req,res) => {
+
+
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte from tbcliente,tbagendamentos';
+
+    con.query(query, (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+
+}); 
+
 app.listen(8080, () => {
     console.log('Server esta escutando no porto 8080');
 });
