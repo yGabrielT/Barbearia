@@ -111,7 +111,7 @@ app.get('/sql/selectCliente', (req,res) => {
 app.get('/sql/selectAgendamentos', (req,res) => {
 
 
-    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte from tbcliente,tbagendamentos';
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_agenda';
 
     con.query(query, (err, result) => {
         if (err) throw err;

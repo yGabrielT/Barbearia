@@ -79,29 +79,25 @@
 
 </main>
     <script>
-        var clientesAgendados1;
+        var clientesAgendados;
         fetch(`/sql/selectAgendamentos`)
                 .then(response=> response.json())
                 .then(data => extractClientes(data));
 
         function extractClientes(obj)
         {
-            clientesAgendados1 = obj;
-            console.log(clientesAgendados1);
+            clientesAgendados = obj;
+            console.log(clientesAgendados);
             exibirClientes();
         }
         
-        const clientesAgendados = [
-            {nome: "João Silva", servico: "Corte de Cabelo", horario: "10:00" },
-            { nome: "Maria Oliveira", servico: "Barba", horario: "11:30" },
-            { nome: "Pedro Santos", servico: "Corte e Barba", horario: "13:00" },
-            {nome: "Ana Paula", servico: "Corte de Cabelo", horario: "15:00" },
-        ];
         function exibirClientes() {
             const listaClientes = document.getElementById("lista-clientes");
-            clientesAgendados1.forEach(cliente => {
+            clientesAgendados.forEach(cliente => {
                 const li = document.createElement("li");
-                li.textContent = `${cliente.nome} - ${cliente.desc_corte} às ${cliente.data_corte}`;
+                const date = new Date(cliente.data_corte);
+                const dataFormatada = date.toLocaleString('pt-BR');
+                li.textContent = `${cliente.nome} - ${cliente.desc_corte} - Data: ${dataFormatada}`;
                 listaClientes.appendChild(li);
         });
         }
