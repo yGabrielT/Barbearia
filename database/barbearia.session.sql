@@ -27,3 +27,6 @@ SELECT * FROM tbcliente
 
 -- @block
 SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente;
+
+-- @block
+SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente where data_corte >= '2024-10-02' AND data_corte <= '2025-10-02';

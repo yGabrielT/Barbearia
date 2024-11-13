@@ -108,12 +108,12 @@ app.get('/sql/selectCliente', (req,res) => {
 
 }); 
 
-app.get('/sql/selectAgendamentos', (req,res) => {
+app.get('/sql/selectAgendamentosNome', (req,res) => {
 
-    const {date} = req.query;
-    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente where data_corte = (?)';
+    const {nome} = req.query;
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente where tbcliente.nome = (?)';
 
-    con.query(query, [date], (err, result) => {
+    con.query(query, [nome], (err, result) => {
         if (err) throw err;
         console.log(result);
         res.json(result);
@@ -126,6 +126,20 @@ app.get('/sql/selectAgendamentosSemQuery', (req,res) => {
     const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente';
 
     con.query(query, (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+
+}); 
+
+app.get('/sql/selectAgendamentosEntreDois', (req,res) => {
+
+    const {date} = req.query;
+    const {date2} = req.query;
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente where data_corte >= (?) AND data_corte <= (?)';
+
+    con.query(query, [date,date2], (err, result) => {
         if (err) throw err;
         console.log(result);
         res.json(result);

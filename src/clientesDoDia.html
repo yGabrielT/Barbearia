@@ -62,10 +62,10 @@
         top: 50%;
         width: 700px;
         padding: 10px 0;
-        margin-left: 200px;
+        margin-left: 50px;
         font-size: 17px;
         height: 20%;
-        margin-top: 22px;
+        margin-top: 2.5%;
         margin-right: 20px;
     }
     #Titulo
@@ -105,9 +105,13 @@
 
 <div id = "Titulo">
     <h2>Lista de Clientes</h2>
-    <input type="date" placeholder="Digite a data neste formato: dd/mm/yyyy" id="dateInput" onchange="searchClientes()">
+    <input type="text" placeholder="Data de início" id="dateInput" onchange="searchTwoDatesClientes()" onfocus="(this.type='date')">
+    <input type="text" placeholder="Data de término" id="dateInput2" onchange="searchTwoDatesClientes()" onfocus="(this.type='date')">
+    <input type="text" placeholder="Nome do cliente: " id="nomeInput" onchange="searchClientes()">
     <button id = "mostrarTudo" onclick="ShowAllClientes()">Ver tudo</button>
+    <button id = "mostrarTudo" onclick="Limpar()">Limpar</button>
 </div>
+
             
  
 <ul id="lista-clientes"></ul>
@@ -131,11 +135,22 @@
             // Return in the format 'YYYY-MM-DD HH:mm:ss'
             return `${year}-${month}-${day} 03:${minutes}:${seconds}`;
         }
-
+        function Limpar()
+        {
+            const list = document.getElementById("lista-clientes");
+            list.innerHTML = '';
+            document.getElementById("nomeInput").value = "";
+            document.getElementById("dateInput").value = "";
+            document.getElementById("dateInput2").value = "";
+        }
         function ShowAllClientes()
         {
             const list = document.getElementById("lista-clientes");
             list.innerHTML = '';
+            document.getElementById("nomeInput").value = "";
+            document.getElementById("dateInput").value = "";
+            document.getElementById("dateInput2").value = "";
+            
             fetch(`/sql/selectAgendamentosSemQuery`)
                         .then(response=> response.json())
                         .then(data => extractClientes(data));
@@ -145,13 +160,30 @@
         {
             const list = document.getElementById("lista-clientes");
             list.innerHTML = '';
-            const dataValor = document.getElementById("dateInput").value;
-            const date = new Date(dataValor);
-            const realDate = formatDatetimeWithoutTimezone(date);
-            console.log(formatDatetimeWithoutTimezone(date));
-            if (Date.parse(realDate))
+            
+            const nomeValor = document.getElementById("nomeInput").value;
+            
+            if (nomeValor)
             {
-                fetch(`/sql/selectAgendamentos?date=${realDate}`)
+                fetch(`/sql/selectAgendamentosNome?nome=${nomeValor}`)
+                        .then(response=> response.json())
+                        .then(data => extractClientes(data));
+            } 
+        }
+
+        function searchTwoDatesClientes()
+        {
+            const list = document.getElementById("lista-clientes");
+            list.innerHTML = '';
+            const dataValor = document.getElementById("dateInput").value;
+            const dataValor2 = document.getElementById("dateInput2").value;
+            const date = new Date(dataValor);
+            const date2 = new Date(dataValor2);
+            const realDate = formatDatetimeWithoutTimezone(date);
+            const realDate2 = formatDatetimeWithoutTimezone(date2);
+            if (Date.parse(realDate) && Date.parse(realDate2))
+            {
+                fetch(`/sql/selectAgendamentosEntreDois?date=${realDate}&date2=${realDate2}`)
                         .then(response=> response.json())
                         .then(data => extractClientes(data));
             } 
