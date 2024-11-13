@@ -26,4 +26,4 @@ SELECT * FROM tbagendamentos
 SELECT * FROM tbcliente
 
 -- @block
-SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_agenda;
+SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente;

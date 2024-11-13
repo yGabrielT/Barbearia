@@ -110,10 +110,10 @@ app.get('/sql/selectCliente', (req,res) => {
 
 app.get('/sql/selectAgendamentos', (req,res) => {
 
+    const {date} = req.query;
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente where data_corte = (?)';
 
-    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_agenda';
-
-    con.query(query, (err, result) => {
+    con.query(query, [date], (err, result) => {
         if (err) throw err;
         console.log(result);
         res.json(result);

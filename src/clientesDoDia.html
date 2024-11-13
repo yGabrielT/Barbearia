@@ -38,7 +38,9 @@
     }
 
     h2 {
-        margin-top: 0;
+        text-align: center;
+        padding: 10px 0;
+        margin-left: auto;
     }
 
     ul {
@@ -53,6 +55,25 @@
 
     li:last-child {
         border-bottom: none;
+    }
+    input {
+        text-align: center;
+        border: none;
+        top: 50%;
+        width: 700px;
+        padding: 10px 0;
+        margin-left: 200px;
+        font-size: 17px;
+        height: 20%;
+        margin-top: 22px;
+        margin-right: 20px;
+    }
+    #Titulo
+    {
+        display: flex;
+        text-align: center;
+        background-color: #ddd;
+        
     }
 </style>
 </head>
@@ -69,8 +90,11 @@
             
            
 
-   
-<h2>Lista de Clientes</h2>
+<div id = "Titulo">
+    <h2>Lista de Clientes</h2>
+    <input type="date" placeholder="Digite a data neste formato: dd/mm/yyyy" id="dateInput" onchange="searchClientes()">
+
+</div>
             
  
 <ul id="lista-clientes"></ul>
@@ -80,10 +104,37 @@
 </main>
     <script>
         var clientesAgendados;
-        fetch(`/sql/selectAgendamentos`)
-                .then(response=> response.json())
-                .then(data => extractClientes(data));
 
+        function formatDatetimeWithoutTimezone(input) {
+            const date = new Date(input);
+    
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            
+            // Return in the format 'YYYY-MM-DD HH:mm:ss'
+            return `${year}-${month}-${day} 03:${minutes}:${seconds}`;
+        }
+
+        function searchClientes()
+        {
+            const list = document.getElementById("lista-clientes");
+            list.innerHTML = '';
+            const dataValor = document.getElementById("dateInput").value;
+            const date = new Date(dataValor);
+            const realDate = formatDatetimeWithoutTimezone(date);
+            console.log(formatDatetimeWithoutTimezone(date));
+            if (Date.parse(realDate))
+            {
+                fetch(`/sql/selectAgendamentos?date=${realDate}`)
+                        .then(response=> response.json())
+                        .then(data => extractClientes(data));
+            } 
+        }
+        
         function extractClientes(obj)
         {
             clientesAgendados = obj;
@@ -93,6 +144,7 @@
         
         function exibirClientes() {
             const listaClientes = document.getElementById("lista-clientes");
+            
             clientesAgendados.forEach(cliente => {
                 const li = document.createElement("li");
                 const date = new Date(cliente.data_corte);
