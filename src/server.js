@@ -121,6 +121,18 @@ app.get('/sql/selectAgendamentos', (req,res) => {
 
 }); 
 
+app.get('/sql/selectAgendamentosSemQuery', (req,res) => {
+
+    const query = 'SELECT tbcliente.nome,tbagendamentos.desc_corte,tbagendamentos.data_corte FROM tbcliente JOIN tbagendamentos ON tbcliente.id_cliente = tbagendamentos.id_cliente';
+
+    con.query(query, (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+
+}); 
+
 app.listen(8080, () => {
     console.log('Server esta escutando no porto 8080');
 });

@@ -75,6 +75,19 @@
         background-color: #ddd;
         
     }
+    #mostrarTudo
+    {
+        transition-duration: .4s;
+        width: 10%;
+        border: 2px solid #000000;
+        color: rgb(255, 255, 255);
+        background-color: #424242;
+    }
+
+    #mostrarTudo:hover
+    {
+        background-color: #000000;
+    }
 </style>
 </head>
 <body>
@@ -93,7 +106,7 @@
 <div id = "Titulo">
     <h2>Lista de Clientes</h2>
     <input type="date" placeholder="Digite a data neste formato: dd/mm/yyyy" id="dateInput" onchange="searchClientes()">
-
+    <button id = "mostrarTudo" onclick="ShowAllClientes()">Ver tudo</button>
 </div>
             
  
@@ -117,6 +130,15 @@
             
             // Return in the format 'YYYY-MM-DD HH:mm:ss'
             return `${year}-${month}-${day} 03:${minutes}:${seconds}`;
+        }
+
+        function ShowAllClientes()
+        {
+            const list = document.getElementById("lista-clientes");
+            list.innerHTML = '';
+            fetch(`/sql/selectAgendamentosSemQuery`)
+                        .then(response=> response.json())
+                        .then(data => extractClientes(data));
         }
 
         function searchClientes()
